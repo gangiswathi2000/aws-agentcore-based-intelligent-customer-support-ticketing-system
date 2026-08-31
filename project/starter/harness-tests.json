@@ -1,0 +1,44 @@
+{
+  "tests": [
+    {
+      "id": "t1_bug_report_partial",
+      "prompt": "Whenever I try to add an item to my wishlist, the page reloads and displays an internal server error.",
+      "expected": "Recognizes the bug report but notes missing environment details (browser, device, or OS). Asks for the missing environment and does not file a ticket yet."
+    },
+    {
+      "id": "t2_bug_report_complete",
+      "prompt": "Using Chrome 122 on Windows 11, the search filter dropdown freezes whenever I filter by price range. To reproduce: open the store, search for shoes, set max price to $50, and the filter fails.",
+      "expected": "Files the bug report ticket immediately without follow-up questions and returns the ticket ID."
+    },
+    {
+      "id": "t3_faq_tracking",
+      "prompt": "How do I check the tracking status for an order I placed yesterday?",
+      "expected": "Answers accurately from the FAQ that a tracking link is emailed once the order ships, and can also be found under My Orders for account holders."
+    },
+    {
+      "id": "t4_faq_cancellation",
+      "prompt": "Why was my recent order automatically canceled?",
+      "expected": "Explains based on the FAQ that orders may be canceled due to payment authorization issues, stock availability, or fraud checks, and confirms no charges apply."
+    },
+    {
+      "id": "t5_faq_shipping_international",
+      "prompt": "Do you offer international shipping, and how is the shipping rate determined?",
+      "expected": "Answers from the FAQ that international shipping is available for supported countries at checkout and calculated based on destination and delivery speed."
+    },
+    {
+      "id": "t6_out_of_scope_recipe",
+      "prompt": "Can you give me a recipe for baking chocolate chip cookies?",
+      "expected": "Politely declines as out-of-scope for the online shop and redirects the customer to the human support line at 1-800-555-0199."
+    },
+    {
+      "id": "t7_faq_uncovered_giftwrap",
+      "prompt": "Can I request custom gift wrapping and a handwritten card for my purchase?",
+      "expected": "States that gift wrapping services are not covered in the FAQ and redirects the customer to the human support line at 1-800-555-0199."
+    },
+    {
+      "id": "t8_ambiguous_account_password",
+      "prompt": "I forgot my account password and cannot log into my account.",
+      "expected": "Treats as an account FAQ query, explaining how to use the 'Forgot password' link to receive a reset email, without filing a bug report ticket."
+    }
+  ]
+}

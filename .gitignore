@@ -1,0 +1,45 @@
+# OS files
+.DS_Store
+**/.DS_Store
+
+# Python envs
+.venv/
+venv/
+env/
+.myenv/
+**/.venv/
+**/venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Secrets / local config
+.env
+.env.*
+*.env
+*.pem
+*.key
+agentcore_config.json
+
+# Generated outputs
+*.jsonl
+output_eval_dataset.jsonl
+logs/
+tmp/
+temp/
+eval-output/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+
+
