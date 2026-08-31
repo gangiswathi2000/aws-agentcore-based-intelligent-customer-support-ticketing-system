@@ -1,37 +1,62 @@
-# Purpose of This Repo
+# Customer Support Chatbot with Amazon Bedrock AgentCore
 
-This repo is meant to be used to keep things organized during content development and act as the source of truth for all projects and exercises related to this course.
+This project demonstrates how a customer support chatbot can be built around
+a well-designed system prompt rather than separate routing logic or custom
+classification components. The prompt handles task routing, information
+gathering, and grounding, while the agent harness manages the conversation
+loop, session continuity, and tool execution.
 
-## Folder Structure
+## The problem
 
-### Lesson Folder
+A support chatbot for an online shop needs to do three very different jobs
+depending on what the customer says:
 
-This repo contains a folder for each `lesson` and one `project` folder.
+•⁠ ⁠A customer reports something broken and needs a ticket filed with engineering.
+•⁠ ⁠A customer asks a routine question about orders, shipping, returns, or
+payments that is already answered in the shop's FAQ.
+•⁠ ⁠A customer asks something that falls outside both cases and needs to be
+pointed toward a human support representative.
 
-Example
-```
-lesson-1-hello
-lesson-2-world
-lesson-3-foo
-lesson-4-bar
-project
-```
+The interesting part is not only identifying which category a message fits
+into, but handling each case correctly once it is recognized.
 
-Each `lesson` folder is named using the naming convention of `lesson-#-name-of-lesson`.
+## Design approach
 
-Example
-```
-lesson-1-hello
-```
+_Collecting ticket information across multiple turns._ A ticket cannot be
+filed with partial information — it needs a description, reproduction steps,
+and the customer's environment (browser, OS, or device). Customers rarely
+provide all three in a single message, so the prompt is designed to conduct
+a brief structured interview: ask for exactly one missing piece at a time,
+never re-ask what is already stated, and delay the ticket-filing tool call
+until all required information is present. The harness preserves conversation
+state across turns, so the chatbot only checks what is missing rather than
+re-deriving known facts.
 
-Four lesson folders have been provided as a template; However, you may need to add more or possibly use less than four depending on what is needed.
+_Restricting answers to known information._ Rather than allowing the model
+to reason about shop policy, the prompt restricts responses to only what is
+present in an embedded FAQ document and explicitly defines how to handle
+out-of-scope questions — treat them as a handoff case rather than attempting
+to answer.
 
-If you require an additional lesson folder, you can make a copy of the folder and paste it into the root directory.
+_Disambiguating edge cases._ Some messages naturally fit multiple categories —
+a late delivery could be a bug or a platform question, as could a checkout
+error or declined payment. The prompt spells out how each should be
+classified, since unclear boundaries typically lead to inconsistent routing.
 
-### Exercises Folder
+## Architecture
 
-Each `lesson` folder contains an `exercises` folder. This `exercises` folder should contain all files and instructions necessary for the exercises along with the solution. The solutions for these exercises will be shared with students. See the `README` in the `exercises` folder for information about folder structure.
+•⁠ ⁠**Agent Harness:** Manages the conversation loop, maintains session state,
+and executes tool calls.
+•⁠ ⁠**Ticket Filing Tool:** Implemented as a Lambda function and exposed through
+a gateway, keeping business logic separate from the conversation flow.
+•⁠ ⁠**Persistent Storage:** Tickets are stored in DynamoDB.
+•⁠ ⁠**System Prompt:** Contains all routing rules, information-collection logic,
+FAQ grounding, and tie-breaking guidance. This design makes iteration
+rapid: modify the prompt, rebuild, and test immediately.
 
-### Project Folder
+## Evaluation
 
-The `project` folder should contain all files and instructions necessary for setup. If possible, a set of instructions should be provided for both Udacity workspaces and a way to work locally (for both MacOS and Windows OS). At a minimum, one set of instructions should be provided. A `README` template has been provided in the project folder. This template layout should be used to write your README.
+Manual testing is useful during development but does not scale. A test suite
+was created with representative prompts paired against expected behavior,
+covering all three message types plus edge cases. Each test case produces a
+full transcript that is scored by an LLM-as-a-judge process.
